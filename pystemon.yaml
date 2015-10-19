@@ -1,11 +1,11 @@
-#network:		# Network settings
-#  ip: '1.1.1.1'	# Specify source IP address if you want to bind on a specific one
+#network:               # Network settings
+#  ip: '1.1.1.1'        # Specify source IP address if you want to bind on a specific one
 
 syslog:
-  enable: yes           # enable syslog
+  enable: no           # enable syslog
 
 archive:
-  save: yes             # Keep 
+  save: yes             # Keep
   save-all: no          # Keep a copy of all pasties
   dir: "alerts"         # Directory where matching pasties should be kept
   dir-all: "archive"    # Directory where all pasties should be kept (if save-all is set to yes)
@@ -17,7 +17,7 @@ db:
     file: 'db.sqlite3'  # The filename of the database
 
 redis:
-  queue: yes
+  queue: no
   server: "localhost"
   port: 6379
   database: 10
@@ -34,7 +34,7 @@ email:
 
 #####
 # Definition of regular expressions to search for in the pasties
-# 
+#
 search:
 #  - description: ''    # (optional) A human readable description. (used in alerting)
 #    search: ''         # The regular expression to search for
@@ -61,12 +61,12 @@ search:
 threads: 1              # number of download threads per site
 site:
 #  example.com:
-#    archive-url:       # the url where the list of last pasties is present 
+#    archive-url:       # the url where the list of last pasties is present
 #                       # example: 'http://pastebin.com/archive'
 #    archive-regex:     # a regular expression to extract the pastie-id from the page.
 #                       # do not forget the () to extract the pastie-id
 #                       # example: '<a href="/(\w{8})">.+</a></td>'
-#    download-url:      # url for the raw pastie.    
+#    download-url:      # url for the raw pastie.
 #                       # Should contain {id} on the place where the ID of the pastie needs to be placed
 #                       # example: 'http://pastebin.com/raw.php?i={id}'
 #    update-max: 40     # every X seconds check for new updates to see if new pasties are available
@@ -75,11 +75,16 @@ site:
 #                       # This is practical for sites that require custom fetchPastie() functions
 
   pastebin.com:
-    archive-url: 'http://pastebin.com/archive'
+    archive-url: 'http://pastebin.com/'
     archive-regex: '<a href="/(\w{8})">.+</a></td>'
     download-url: 'http://pastebin.com/raw.php?i={id}'
-    update-max: 95
-    update-min: 85
+
+  pastebin-trend:
+    archive-url: 'http://pastebin.com/trends'
+    archive-regex: '<a href="/(\w{8})">.+</a></td>'
+    download-url: 'http://pastebin.com/raw.php?i={id}'
+    update-max: 180
+    update-min: 60
 
 # See https:/bastebin.com/api_scraping_faq , you will need a pro accout on pastebin
 #  pastebin.com_pro:
@@ -88,14 +93,14 @@ site:
 #    download-url: 'http://pastebin.com/api_scrape_item.php?i={id}'
 #    update-max: 50
 #    update-min: 40
- 
+
   pastie.org:
     archive-url: 'http://pastie.org/pastes'
     archive-regex: '<a href="http://pastie.org/pastes/(\d+)">'
     download-url: 'http://pastie.org/pastes/{id}/text'
 
   slexy.org:
-    archive-url: 'http://slexy.org/recent' 
+    archive-url: 'http://slexy.org/recent/'
     archive-regex: '<a href="/view/([a-zA-Z0-9]+)">View paste</a>'
     download-url: 'http://slexy.org/raw/{id}'
 
@@ -103,7 +108,7 @@ site:
     archive-url: 'https://gist.github.com/discover'
     archive-regex: '<a href="/([a-zA-Z0-9]+/[a-z0-9]+)">'
     download-url: 'https://gist.githubusercontent.com/{id}/raw'
-    
+
   codepad.org:
     archive-url: 'http://codepad.org/recent'
     archive-regex: '<a href="http://codepad.org/([a-zA-Z0-9]+)">view'
@@ -115,7 +120,7 @@ site:
     archive-regex: '<link>https://snipt.net/(.+)/</link>'
     download-url: 'https://snipt.net/{id}/'
 
-#  safebin.net:  # FIXME not finished
+#  safebin.net:  # Domain expired
 #    archive-url: 'http://safebin.net/?archive'
 #    archive-regex: '<a title="[a-zA-Z0-9 :,]+" href="/([0-9]+)">'
 #    download-url: 'http://safebin.net/{id}'
@@ -166,60 +171,60 @@ site:
     archive-url: 'http://snipplr.com/all'
     archive-regex: '<a href=''/view/(.+?/.+?/)'
     download-url: 'http://snipplr.com/view/{id}'
- 
+
   lpaste.net:
-    archive-url: 'http://lpaste.net/brows'
+    archive-url: 'http://lpaste.net/browse'
     archive-regex: '<a href="/(\d+)"'
     download-url: 'http://lpaste.net/raw/{id}'
 
   wklej.se:
-    archive-url: 'http://wklej.se'
-    archive-regex: '<a href="http://users.wklej.se/(.+?/.+?")'
+    archive-url: 'http://wklej.se/'
+    archive-regex: '<a href="http://users.wklej.se/(\w+)"'
     download-url: 'http://wklej.se/{id}'
-  
+
   pastebin.ru:
     archive-url: 'http://pastebin.ru/'
     archive-regex: '<a href="/(\w+)">'
     download-url: 'http://pastebin.ru/{id}'
-  
+
   pastebin.gr:
     archive-url: 'http://pastebin.gr/'
-    archive-regex: '<a href="http://pastebin.gr/(\d+)'
+    archive-regex: '<li><a href="http://pastebin.gr/(\d+)'
     download-url: 'http://pastebin.gr/pastebin.php?dl={id}'
-  
+
   pastebin.fr:
     archive-url: 'http://pastebin.fr'
     archive-regex: '<a href="http://pastebin.fr/(\d+)'
     download-url: 'http://pastebin.fr/{id}'
-  
+
   paste.opensuse.org:
     archive-url: 'http://paste.opensuse.org/lists'
     archive-regex: '<a href="http://paste.opensuse.org/(\d+)'
     download-url: 'http://paste.opensuse.org/view/raw/{id}'
-  
+
   paste.kde.org:
     archive-url: 'https://paste.kde.org/all'
     archive-regex: '<a href="https://paste.kde.org/(\w+)" c'
     download-url: 'https://paste.kde.org/{id}'
-  
+
   paste.fedoraproject.org:
     archive-url: 'http://paste.fedoraproject.org/all/'
     archive-regex: '<a href="/(\d+)/'
     download-url: 'http://paste.fedoraproject.org/{id}/raw/'
-  
+
   paste.debian.net:
     archive-url: 'http://paste.debian.net/'
     archive-regex: '<a href=''//paste.debian.net/(\d+)'
     download-url: 'http://paste.debian.net/plain/{id}'
-  
+
   kpaste.net:
     archive-url: 'http://kpaste.net/'
     archive-regex: '" href="/(\w+)">'
-    download-url: 'http://kpaste.net/(id)?raw'
+    download-url: 'http://kpaste.net/{id}?raw'
 
 # TODO
-# http://www.safebin.net/       # more complex site
-# http://www.heypasteit.com/    # http://www.heypasteit.com/clip/0IZA => incremental 
+# http://www.safebin.net/       # Domain expired
+# http://www.heypasteit.com/    # http://www.heypasteit.com/clip/0IZA => incremental
 
 # http://hastebin.com/          # no list of last pastes
 # http://sebsauvage.net/paste/  # no list of last pastes
@@ -229,13 +234,12 @@ site:
 # http://0bin.net/              # no list of last pastes
 # http://markable.in/           # no list of last pastes
 
-
 #####
 # Configuration section to configure proxies
 # Currently only HTTP proxies are permitted
 #
 proxy:
-  use: yes
+  use: no
   random: no
   single-proxy: 'http://127.0.0.1:8080'
   random-proxy-file: 'proxies.txt'
