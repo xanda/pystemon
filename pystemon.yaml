@@ -76,12 +76,12 @@ site:
 
   pastebin.com:
     archive-url: 'http://pastebin.com/'
-    archive-regex: '<a href="/(\w{8})">.+</a></td>'
+    archive-regex: '<li><a href="/(\w{8})">'
     download-url: 'http://pastebin.com/raw.php?i={id}'
 
   pastebin-trend:
     archive-url: 'http://pastebin.com/trends'
-    archive-regex: '<a href="/(\w{8})">.+</a></td>'
+    archive-regex: '<li><a href="/(\w{8})">'
     download-url: 'http://pastebin.com/raw.php?i={id}'
     update-max: 180
     update-min: 60
