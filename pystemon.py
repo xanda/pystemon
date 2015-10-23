@@ -313,8 +313,8 @@ class Pastie():
     def send_email_alert(self):
         alert = "Found hit for {matches} in pastie {url}".format(matches=self.matches_to_text(), url=self.url)
         # headers
-        msgSubject = yamlconfig['email']['subject'].format(subject=alert)+'\n'
-        msgFrom = yamlconfig['email']['from']+'\n'
+        msgSubject = 'Subject: ' + yamlconfig['email']['subject'].format(subject=alert)+'\n'
+        msgFrom = 'From: ' + yamlconfig['email']['from']+'\n'
         # build the list of recipients
         recipients = []
         recipients.append(yamlconfig['email']['to'])  # first the global alert email
@@ -323,7 +323,7 @@ class Pastie():
                 recipients.extend(match['to'].split(","))
         msgTo = ','.join(recipients)+'\n'  # here the list needs to be comma separated
 
-        mailHeader = msgFrom + msgTo + msgSubject
+        mailHeader = msgFrom + msgSubject
         # message body including full paste rather than attaching it
         msg = '''
 I found a hit for a regular expression on one of the pastebin sites.
@@ -341,14 +341,14 @@ Below (after newline) is the content of the pastie:
         #msg.attach(MIMEText(message))
         # send out the mail
         try:
-            s = smtplib.SMTP(yamlconfig['email']['server'], yamlconfig['email']['port'])
+            s = smtplib.SMTP(yamlconfig['email']['server'], int(yamlconfig['email']['port']))
             if yamlconfig['email']['tls']:
                s.starttls()
             # login to the SMTP server if configured
             if 'username' in yamlconfig['email'] and yamlconfig['email']['username']:
                 s.login(yamlconfig['email']['username'], yamlconfig['email']['password'])
             # send the mail
-            s.sendmail(yamlconfig['email']['from'], msg['To'], msg.as_string())
+            s.sendmail(yamlconfig['email']['from'], msgTo, msg)
             s.quit()
         except smtplib.SMTPException, e:
             logger.error("ERROR: unable to send email: {0}".format(e))
