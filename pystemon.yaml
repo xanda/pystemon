@@ -140,7 +140,7 @@ site:
   pastebin.ca:
     archive-url: 'http://pastebin.ca'
     archive-regex: 'rel="/preview.php\?id=(\d+)'
-    download-url: 'http://pastebin.ca/{id}'
+    download-url: 'http://pastebin.ca/raw/{id}'
 
   ideone.com:
     archive-url: 'http://ideone.com/recent'
