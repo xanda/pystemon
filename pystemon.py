@@ -35,10 +35,7 @@ import gzip
 import hashlib
 import traceback
 from sets import Set
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
-from email.MIMEText import MIMEText
-from email import Encoders
+import smtplib
 try:
     from BeautifulSoup import BeautifulSoup
 except:
@@ -313,21 +310,22 @@ class Pastie():
         else:
             return ''
 
-    def sendEmailAlert(self):
-        msg = MIMEMultipart()
-        alert = "Found hit for {matches} in pastie {url}".format(matches=self.matchesToText(), url=self.url)
+    def send_email_alert(self):
+        alert = "Found hit for {matches} in pastie {url}".format(matches=self.matches_to_text(), url=self.url)
         # headers
-        msg['Subject'] = yamlconfig['email']['subject'].format(subject=alert)
-        msg['From'] = yamlconfig['email']['from']
+        msgSubject = yamlconfig['email']['subject'].format(subject=alert)+'\n'
+        msgFrom = yamlconfig['email']['from']+'\n'
         # build the list of recipients
         recipients = []
         recipients.append(yamlconfig['email']['to'])  # first the global alert email
         for match in self.matches:                    # per match, the custom additional email
             if 'to' in match and match['to']:
                 recipients.extend(match['to'].split(","))
-        msg['To'] = ','.join(recipients)  # here the list needs to be comma separated
+        msgTo = ','.join(recipients)+'\n'  # here the list needs to be comma separated
+
+        mailHeader = msgFrom + msgTo + msgSubject
         # message body including full paste rather than attaching it
-        message = '''
+        msg = '''
 I found a hit for a regular expression on one of the pastebin sites.
 
 The site where the paste came from :        {site}
@@ -338,22 +336,24 @@ Below (after newline) is the content of the pastie:
 
 {content}
 
-        '''.format(site=self.site.name, url=self.url, matches=self.matchesToRegex(), content=self.pastie_content.encode('utf8'))
-        msg.attach(MIMEText(message))
+        '''.format(site=self.site.name, url=self.url, matches=self.matches_to_regex(), content=self.pastie_content)
+        msg = mailHeader + msg
+        #msg.attach(MIMEText(message))
         # send out the mail
         try:
             s = smtplib.SMTP(yamlconfig['email']['server'], yamlconfig['email']['port'])
+            if yamlconfig['email']['tls']:
+               s.starttls()
             # login to the SMTP server if configured
             if 'username' in yamlconfig['email'] and yamlconfig['email']['username']:
                 s.login(yamlconfig['email']['username'], yamlconfig['email']['password'])
             # send the mail
-            s.sendmail(yamlconfig['email']['from'], recipients, msg.as_string())
-            s.close()
+            s.sendmail(yamlconfig['email']['from'], msg['To'], msg.as_string())
+            s.quit()
         except smtplib.SMTPException, e:
             logger.error("ERROR: unable to send email: {0}".format(e))
         except Exception, e:
             logger.error("ERROR: unable to send email. Are your email setting correct?: {e}".format(e=e))
-
 
 class PastiePasteSiteCom(Pastie):
     '''
