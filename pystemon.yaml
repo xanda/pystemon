@@ -78,12 +78,12 @@ site:
   pastebin.com:
     archive-url: 'http://pastebin.com/'
     archive-regex: '<li><a href="/(\w{8})">'
-    download-url: 'http://pastebin.com/raw.php?i={id}'
+    download-url: 'http://pastebin.com/raw/{id}'
 
   pastebin-trend:
     archive-url: 'http://pastebin.com/trends'
     archive-regex: '<li><a href="/(\w{8})">'
-    download-url: 'http://pastebin.com/raw.php?i={id}'
+    download-url: 'http://pastebin.com/raw/{id}'
     update-max: 180
     update-min: 60
 
